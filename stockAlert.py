@@ -30,6 +30,7 @@ class Stock:
 
 
 def getKey(file):
+    """This function returns a random key from the file that contains the API keys"""
     keys = open(file).read().splitlines()
     return random.choice(keys)
 
@@ -50,6 +51,7 @@ def readStocksFromFile(file):
 
 
 def getStockData(stock_file, key_file):
+    """This function calls the Alpha Vantage API to get the stock data in pandas format"""
     stocks = readStocksFromFile(stock_file)
     key = getKey(key_file)
     time = TimeSeries(key=key, output_format='pandas')
