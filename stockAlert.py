@@ -3,8 +3,10 @@ from alpha_vantage.timeseries import TimeSeries
 import sys
 import random
 import json
+import os
 import pandas as pd
 import alertBot as bot
+from dotenv import load_dotenv
 
 # ticker = str(sys.argv[1])
 
@@ -30,10 +32,12 @@ class Stock:
         self.ct = ct
 
 
-def getKey(file):
+def getKey():
     """This function returns a random key from the file that contains the API keys"""
-    keys = open(file).read().splitlines()
-    return random.choice(keys)
+    load_dotenv()
+    keys = os.getenv('KEYS')
+    keys1 = keys.split(' ')
+    return random.choice(keys1)
 
 
 def readStocksFromFile(file):
@@ -54,7 +58,7 @@ def readStocksFromFile(file):
 def getStockData(stock_file, key_file):
     """This function calls the Alpha Vantage API to get the stock data in pandas format"""
     stocks = readStocksFromFile(stock_file)
-    key = getKey(key_file)
+    key = getKey()
     time = TimeSeries(key=key, output_format='pandas')
     pd.set_option('display.max_rows', 500)
     stock_data = []
@@ -77,4 +81,4 @@ def getStockData(stock_file, key_file):
 # I need to calculate the difference and check if its greater than or less than the CT
 # I need to send the appropriate response to the discord bot -- DONE, need to clean up the exit process
 
-bot.sendMessage("this is a test from another python script")
+# bot.sendMessage("this is a test from another python script")
