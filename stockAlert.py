@@ -4,6 +4,7 @@ import sys
 import random
 import json
 import pandas as pd
+import alertBot as bot
 
 # ticker = str(sys.argv[1])
 
@@ -66,6 +67,14 @@ def getStockData(stock_file, key_file):
     return stock_data
 
 
-data = getStockData('stocks', 'keys')
-for data1 in data:
-    print(data1)
+# data = getStockData('stocks', 'keys')
+# for data1 in data:
+#     print(data1)
+
+
+# I need to get the first and second value from the pandas DataFrame
+# I need to get the change threshold percentage
+# I need to calculate the difference and check if its greater than or less than the CT
+# I need to send the appropriate response to the discord bot -- DONE, need to clean up the exit process
+
+bot.sendMessage("this is a test from another python script")
