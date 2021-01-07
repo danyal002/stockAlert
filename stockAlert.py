@@ -54,8 +54,15 @@ def readStocksFromFile(file):
 
     return refined_list
 
+# def getStockChangeThreshold(symbol):
+#     """This function returns the change threshold for a stock symbol"""
+#     stocks = readStocksFromFile('stocks')
+#     for stock in stocks:
+#         if stock.symbol == symbol:
+#             return stock.ct
 
-def getStockData(stock_file, key_file):
+
+def getStockData(stock_file):
     """This function calls the Alpha Vantage API to get the stock data in pandas format"""
     stocks = readStocksFromFile(stock_file)
     key = getKey()
@@ -71,10 +78,30 @@ def getStockData(stock_file, key_file):
     return stock_data
 
 
+def calculate(data_frame, symbol, ct):
+    latest_quote = data_frame.iloc[1][1]
+    before_quote = data_frame.iloc[1][2]
+    loss = False
+
+    change_in_price = latest_quote - before_quote
+    if change_in_price < 0:
+        percent = ((change_in_price * -1) / latest_quote) * 100
+        loss = True
+        if(percent >= ct):
+            string = f'The stock {symbol} has fallen below {ct}%. The current price is {latest_quote}'
+            bot.sendMessage(string)
+
+    elif change_in_price > 0:
+        percent = (change_in_price / latest_quote) * 100
+        loss = False
+        if(percent >= ct):
+            string = f'The stock {symbol} has increased above {ct}%. The current price is {latest_quote}'
+            bot.sendMessage(string)
+
+
 # data = getStockData('stocks', 'keys')
 # for data1 in data:
 #     print(data1)
-
 
 # I need to get the first and second value from the pandas DataFrame
 # I need to get the change threshold percentage
