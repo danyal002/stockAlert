@@ -6,6 +6,7 @@ import json
 import os
 import pandas as pd
 import alertBot as bot
+import csv
 from dotenv import load_dotenv
 
 # ticker = str(sys.argv[1])
@@ -72,40 +73,52 @@ def getStockData(stock_file):
 
     for stock in stocks:
         data = time.get_intraday(
-            symbol=stock.symbol, interval=time_interval, outputsize='compact')
+            symbol=stock.symbol, interval=time_interval, outputsize='full')
         stock_data.append(data)
 
-    return stock_data
+    return list(stock_data)
 
 
 def calculate(data_frame, symbol, ct):
-    latest_quote = data_frame.iloc[1][1]
-    before_quote = data_frame.iloc[1][2]
+    latest_quote = data_frame[0]['4. close'][0]
+    before_quote = data_frame[0]['4. close'][1]
+    print(before_quote)
+    print(latest_quote)
+
     loss = False
 
-    change_in_price = latest_quote - before_quote
-    if change_in_price < 0:
-        percent = ((change_in_price * -1) / latest_quote) * 100
-        loss = True
-        if(percent >= ct):
-            string = f'The stock {symbol} has fallen below {ct}%. The current price is {latest_quote}'
-            bot.sendMessage(string)
+    # change_in_price = latest_quote - before_quote
+    # if change_in_price < 0:
+    #     percent = ((change_in_price * -1) / latest_quote) * 100
+    #     loss = True
+    #     if(percent >= ct):
+    #         string = f'The stock {symbol} has fallen below {ct}%. The current price is {latest_quote}'
+    #         bot.sendMessage(string)
 
-    elif change_in_price > 0:
-        percent = (change_in_price / latest_quote) * 100
-        loss = False
-        if(percent >= ct):
-            string = f'The stock {symbol} has increased above {ct}%. The current price is {latest_quote}'
-            bot.sendMessage(string)
+    # elif change_in_price > 0:
+    #     percent = (change_in_price / latest_quote) * 100
+    #     loss = False
+    #     if(percent >= ct):
+    #         string = f'The stock {symbol} has increased above {ct}%. The current price is {latest_quote}'
+    #         bot.sendMessage(string)
 
 
 # data = getStockData('stocks', 'keys')
 # for data1 in data:
 #     print(data1)
 
-# I need to get the first and second value from the pandas DataFrame
-# I need to get the change threshold percentage
-# I need to calculate the difference and check if its greater than or less than the CT
+# I need to get the first and second value from the pandas DataFrame -- RECHECK
+# I need to get the change threshold percentage -- DONE
+# I need to calculate the difference and check if its greater than or less than the CT -- RECHECK
 # I need to send the appropriate response to the discord bot -- DONE, need to clean up the exit process
 
 # bot.sendMessage("this is a test from another python script")
+
+
+stock_objects = readStocksFromFile('stocks')
+dt2 = getStockData('stocks')
+dt = dt2[0]
+print(dt[0]['4. close'])
+# print(type(dt2))
+
+calculate(list(dt2[0]), stock_objects[0].symbol,stock_objects[0].ct)  # example of calling this method
