@@ -8,6 +8,7 @@ import pandas as pd
 import alertBot as bot
 import csv
 from dotenv import load_dotenv
+import math
 
 # ticker = str(sys.argv[1])
 
@@ -76,31 +77,21 @@ def getStockData(stock_file):
             symbol=stock.symbol, interval=time_interval, outputsize='full')
         stock_data.append(data)
 
-    return list(stock_data)
+    return stock_data
 
 
 def calculate(data_frame, symbol, ct):
-    latest_quote = data_frame[0]['4. close'][0]
-    before_quote = data_frame[0]['4. close'][1]
-    print(before_quote)
-    print(latest_quote)
-
-    loss = False
-
-    # change_in_price = latest_quote - before_quote
-    # if change_in_price < 0:
-    #     percent = ((change_in_price * -1) / latest_quote) * 100
-    #     loss = True
-    #     if(percent >= ct):
-    #         string = f'The stock {symbol} has fallen below {ct}%. The current price is {latest_quote}'
-    #         bot.sendMessage(string)
-
-    # elif change_in_price > 0:
-    #     percent = (change_in_price / latest_quote) * 100
-    #     loss = False
-    #     if(percent >= ct):
-    #         string = f'The stock {symbol} has increased above {ct}%. The current price is {latest_quote}'
-    #         bot.sendMessage(string)
+    close_data = data_frame[0]['4. close']
+    per_change = close_data.pct_change()
+    percent_change = per_change[1] if math.isnan(per_change[0]) else per_change[0]
+    print(round(percent_change, 3) * 100)
+    string = ''
+    if(percent_change >= (float(ct) * 0.01)):
+        if(percent_change < 0):
+            string = f'The stock {symbol} has fallen below the change threshold of {ct}%. Last closing price is ${close_data[0]} which is a {round(percent_change * 100, 2)}% difference.'
+        elif(percent_change > 0):
+            string = f'The stock {symbol} has increased above the change threshold of {ct}%. Last closing price is ${close_data[0]} which is a {round(percent_change * 100, 2)}% difference.'
+    return string
 
 
 # data = getStockData('stocks', 'keys')
@@ -112,13 +103,11 @@ def calculate(data_frame, symbol, ct):
 # I need to calculate the difference and check if its greater than or less than the CT -- RECHECK
 # I need to send the appropriate response to the discord bot -- DONE, need to clean up the exit process
 
-# bot.sendMessage("this is a test from another python script")
 
-
-stock_objects = readStocksFromFile('stocks')
-dt2 = getStockData('stocks')
-dt = dt2[0]
-print(dt[0]['4. close'])
+# stock_objects = readStocksFromFile('stocks')
+# dt2 = getStockData('stocks')
+# dt = dt2[0]
+# print(dt[0]['4. close'])
 # print(type(dt2))
 
-calculate(list(dt2[0]), stock_objects[0].symbol,stock_objects[0].ct)  # example of calling this method
+# calculate(list(dt2[0]), stock_objects[0].symbol,stock_objects[0].ct)  # example of calling this method
