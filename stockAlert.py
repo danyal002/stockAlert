@@ -84,7 +84,7 @@ def calculate(data_frame, symbol, ct):
     close_data = data_frame[0]['4. close']
     per_change = close_data.pct_change()
     percent_change = per_change[1] if math.isnan(per_change[0]) else per_change[0]
-    print(round(percent_change, 3) * 100)
+    # print(round(percent_change, 3) * 100)
     string = ''
     if(percent_change >= (float(ct) * 0.01)):
         if(percent_change < 0):
