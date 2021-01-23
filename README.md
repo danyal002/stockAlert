@@ -6,8 +6,7 @@ This Python script uses the Alpha Vantage API and the Discord libary to send sto
 
 Add ticker symbols and changing thresholds in percentage in the stock.txt file. The file should follow this **specific** format:
 
-TICKER_SYMBOL PERCENTAGE
-
+TICKER_SYMBOL PERCENTAGE <br>
 TICKER_SYMBOL PERCENTAGE
 
 and so on... 
